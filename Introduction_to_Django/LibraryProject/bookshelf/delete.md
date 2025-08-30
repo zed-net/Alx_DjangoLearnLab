@@ -1,3 +1,7 @@
+# Import the Book model from your app's models.py file.
+from bookshelf.models import Book
+
+# First, retrieve the book instance to be deleted.
 # We'll use the title updated in the last step: "Nineteen Eighty-Four"
 >>> book_to_delete = Book.objects.get(title="Nineteen Eighty-Four")
 
