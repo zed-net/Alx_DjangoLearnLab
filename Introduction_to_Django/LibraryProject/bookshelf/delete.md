@@ -3,11 +3,11 @@ from bookshelf.models import Book
 
 # First, retrieve the book instance to be deleted.
 # We'll use the title updated in the last step: "Nineteen Eighty-Four"
->>> book_to_delete = Book.objects.get(title="Nineteen Eighty-Four")
+>>> book = Book.objects.get(title="Nineteen Eighty-Four")
 
 # Delete the book from the database.
 # The .delete() method returns a tuple with the number of objects deleted.
->>> book_to_delete.delete()
+>>> book.delete()
 (1, {'your_app_name.Book': 1})
 
 # To confirm the deletion, try to retrieve the book again.
