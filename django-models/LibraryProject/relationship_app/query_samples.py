@@ -5,7 +5,8 @@
 
 # List all books in a library
 
->>> books_in_library = library.books.all()
+>>> books_in_library = Library.objects.get(name=library_name)
+
 
 # Retrieve  the librarian of a library
 >>> librarian = library.librarianS
