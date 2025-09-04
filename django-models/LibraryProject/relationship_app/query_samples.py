@@ -6,8 +6,7 @@
 
 # List all books in a library
 
->>> alexandria = Library.objects.get(name="Alexandria Library")
->>> library_books = alexandria.books.all()
+>>> Library.objects.get(name=library_name)
 
 
 # Retrieve  the librarian of a library
