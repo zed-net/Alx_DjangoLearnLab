@@ -10,5 +10,5 @@
 
 
 # Retrieve  the librarian of a library
->>> Library.objects.get(name=librarian_name).librarian
->>> 
+
+>>> Librarian.objects.get(library=librarian_name)
