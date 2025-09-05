@@ -36,12 +36,12 @@ def register(request):
             form = UserCreationForm()
     return render(request, 'relationship_app/registration/register.html', {'form': form})
 
-class CustomLoginView(LoginView):
+class LoginView(LoginView):
     
     
     template_name = 'relationship_app/registration/login.html'
 
-class CustomLogoutView(LogoutView):
+class LogoutView(LogoutView):
     
 
     template_name = 'relationship_app/registration/logout.html'

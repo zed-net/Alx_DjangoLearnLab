@@ -10,6 +10,6 @@ urlpatterns = [
     # The <int:pk> part captures the primary key of the library from the URL.
     path('library/<int:pk>/', views.LibraryDetailView.as_view(), name='library-detail'),
      path('register/', views.register, name='register'),
-    path('login/', views.CustomLoginView.as_view(), name='login'),
-    path('logout/', views.CustomLogoutView.as_view(), name='logout'),
+    path('login/', views.LoginView.as_view(template_name='login'), name='login'),
+    path('logout/', views.LogoutView.as_view(template_name='logout'), name='logout'),
 ]
