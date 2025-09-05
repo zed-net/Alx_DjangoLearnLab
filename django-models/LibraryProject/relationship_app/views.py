@@ -4,15 +4,8 @@ from .models import Book, Author, Library, Librarian
 from django.views.generic import DetailView
 
 def book_list(request):
-    # Retrieve all Book objects from the database
     books = Book.objects.all()
-    
-    book_list_string = "List of Books:\n\n"
-    for book in books:
-        # Assuming the Book model has a `title` and a `author` field.
-        book_list_string += f"Title: {book.title}, Author: {book.author}\n"
-        
-    return HttpResponse(book_list_string)
+    return render(request, 'list_books.html', {'books': books})
 
 class LibraryDetailView(DetailView):
     
@@ -24,3 +17,5 @@ class LibraryDetailView(DetailView):
     
     # The name of the variable that will hold the library object in the template.
     context_object_name = 'library'
+    
+
