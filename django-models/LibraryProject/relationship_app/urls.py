@@ -12,4 +12,15 @@ urlpatterns = [
      path('register/', views.register, name='register'),
     path('login/', views.LoginView.as_view(template_name='login'), name='login'),
     path('logout/', views.LogoutView.as_view(template_name='logout'), name='logout'),
+    
+    path('admin-view/', views.admin_view, name='admin_view'),
+    
+    # URL for the Librarian-only view, accessible at /librarian-view/
+    path('librarian-view/', views.librarian_view, name='librarian_view'),
+    
+    # URL for the Member-only view, accessible at /member-view/
+    path('member-view/', views.member_view, name='member_view'),
+    
+    # Optional URL for an access denied page
+    path('not-allowed/', views.not_allowed, name='not_allowed'),
 ]

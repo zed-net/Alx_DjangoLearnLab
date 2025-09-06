@@ -6,6 +6,8 @@ from .models import Library
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.models import User
 
 
 def list_books(request):
@@ -47,3 +49,37 @@ class LogoutView(LogoutView):
     template_name = 'relationship_app/registration/logout.html'
 
 
+def is_admin(user):
+    """Checks if the user has the 'Admin' role."""
+    # Assuming the UserProfile model is linked to the User model
+    # and has a 'role' field.
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
+
+def is_librarian(user):
+    """Checks if the user has the 'Librarian' role."""
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
+
+def is_member(user):
+    """Checks if the user has the 'Member' role."""
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
+
+# --- Role-Based Views ---
+@user_passes_test(is_admin)
+def admin_view(request):
+    """A view accessible only to Admin users."""
+    return render(request, 'admin_view.html')
+
+@user_passes_test(is_librarian)
+def librarian_view(request):
+    """A view accessible only to Librarian users."""
+    return render(request, 'librarian_view.html')
+
+@user_passes_test(is_member)
+def member_view(request):
+    """A view accessible only to Member users."""
+    return render(request, 'member_view.html')
+
+# --- Access Denied View ---
+def not_allowed(request):
+    """A view to show when a user does not have permission."""
+    return render(request, 'not_allowed.html')
