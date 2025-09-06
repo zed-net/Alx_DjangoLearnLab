@@ -24,10 +24,10 @@ urlpatterns = [
     # Optional URL for an access denied page
     path('not-allowed/', views.not_allowed, name='not_allowed'),
     
-    path('add/', views.add_book, name='add_book'),
+    path('add_book/', views.add_book, name='add_book'),
 
     # Path for editing an existing book, identified by its primary key (pk).
-    path('<int:pk>/edit/', views.edit_book, name='edit_book'),
+    path('<int:pk>/edit_book/', views.edit_book, name='edit_book'),
 
     # Path for deleting a book, also identified by its primary key.
     path('<int:pk>/delete/', views.delete_book, name='delete_book'),
