@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import permission_required, login_required
 from .models import Book
 from django.db import connection
 from .forms import BookForm, BookSearchForm
+from .forms import ExampleForm
+
 
 
 @permission_required("bookshelf.can_view", raise_exception=True)
