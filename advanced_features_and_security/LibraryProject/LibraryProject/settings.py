@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-oxq+uzz513x-@trnh@wgkz-3&=(uo+^!ndzv=7fn6%%fro7kn&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bookshelf',
     'relationship_app',
+     "csp", 
 ]
 
 MIDDLEWARE = [
@@ -46,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    "csp.middleware.CSPMiddleware",  
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -124,3 +126,16 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Point Django to the custom user model
 AUTH_USER_MODEL = "bookshelf.CustomUser"
+
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# HTTP-only cookies (recommended)
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False  # typically keep False so JavaScript can't read token; changing may break some clients
+
+# Browser protections
+SECURE_BROWSER_XSS_FILTER = True         # sets X-XSS-Protection header
+SECURE_CONTENT_TYPE_NOSNIFF = True      # sets X-Content-Type-Options: nosniff
+X_FRAME_OPTIONS = "DENY"                # prevents clickjacking
