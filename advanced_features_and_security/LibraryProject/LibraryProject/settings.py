@@ -139,3 +139,24 @@ CSRF_COOKIE_HTTPONLY = False  # typically keep False so JavaScript can't read to
 SECURE_BROWSER_XSS_FILTER = True         # sets X-XSS-Protection header
 SECURE_CONTENT_TYPE_NOSNIFF = True      # sets X-Content-Type-Options: nosniff
 X_FRAME_OPTIONS = "DENY"                # prevents clickjacking
+
+
+
+
+
+# Redirect all HTTP -> HTTPS (must have TLS enabled on your server first!)
+SECURE_SSL_REDIRECT = True
+
+# HSTS: Force browsers to only use HTTPS (start small, then increase to 1 year)
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Secure cookies
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+
+
+# If behind a proxy/load balancer (e.g., Nginx, AWS ALB), let Django know
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
