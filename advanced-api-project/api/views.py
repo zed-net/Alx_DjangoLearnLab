@@ -4,17 +4,18 @@ from rest_framework import viewsets
 from rest_framework import generics
 from .serializers import BookSerializer
 from rest_framework import permissions
+from rest_framework import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 
 class ListView(generics.ListView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
 class DetailView(generics.DetailView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class CreateView(generics.CreateView):
     queryset = Book.objects.all()
