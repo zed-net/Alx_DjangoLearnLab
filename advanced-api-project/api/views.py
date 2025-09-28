@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from . models import Book
-from rest_framework import viewsets
 from rest_framework import generics
 from .serializers import BookSerializer
 from rest_framework import filters
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework
 
 
 class ListView(generics.ListView):
