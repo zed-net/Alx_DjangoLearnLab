@@ -4,9 +4,9 @@ from rest_framework import viewsets
 from rest_framework import generics
 from .serializers import BookSerializer
 from rest_framework import permissions
-from rest_framework import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAdminUser, IsAuthenticatedOrReadOnly, IsAuthenticated
+
 
 
 class ListView(generics.ListView):
