@@ -5,6 +5,7 @@ PostCreateView, PostUpdateView, PostDeleteView
 )
 from django.urls import path
 from . import views
+from .views import PostForm, CommentForm, CommentCreateView, CommentUpdateView, CommentDeleteView, SearchResultsView, PostByTagDetailView, TagListView
 
 
 urlpatterns = [
@@ -24,5 +25,5 @@ path('comment/<int:pk>/update/', views.CommentUpdateView.as_view(), name='commen
 path('comment/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment-delete'),
 
 path('search/', views.SearchResultsView.as_view(), name='search'),
-path('tags/<str:tag_name>/', views.TagDetailView.as_view(), name='tag-posts'),
+path('tags/<slug:tag_slug>/', views.PostByTagDetailView.as_view(), name='tag-posts'),
 ]
