@@ -1,5 +1,7 @@
 from django import forms
 from .models import Post
+from django import forms
+from .models import Comment
 
 
 class PostForm(forms.ModelForm):
@@ -17,3 +19,23 @@ class PostForm(forms.ModelForm):
         if not title.strip():
             raise forms.ValidationError('Title cannot be empty or only whitespace.')
         return title
+    
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'rows': 3,
+                'placeholder': 'Write a thoughtful comment...'
+            })
+        }
+
+    def clean_content(self):
+        content = (self.cleaned_data.get('content') or '').strip()
+        if not content:
+            raise forms.ValidationError('Comment cannot be empty.')
+        if len(content) > 20000:
+            raise forms.ValidationError('Comment too long.')
+        return content
