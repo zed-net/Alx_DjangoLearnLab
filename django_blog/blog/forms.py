@@ -1,7 +1,7 @@
 from django import forms
 from .models import Post
 from django import forms
-from .models import Comment,tag, Post
+from .models import Comment, Post, Tag 
 
 
 class PostForm(forms.ModelForm):
@@ -44,7 +44,29 @@ class CommentForm(forms.ModelForm):
             raise forms.ValidationError('Comment too long.')
         return content
 
+
 class TagWidget(forms.TextInput):
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault("attrs", {"placeholder": "Enter tags separated by commas"})
+        kwargs.setdefault("attrs", {
+            "placeholder": "Enter tags separated by commas"
+        })
         super().__init__(*args, **kwargs)
+
+
+class PostForm(forms.ModelForm):
+    tags = forms.CharField(widget=TagWidget(), required=False)
+
+    class Meta:
+        model = Post
+        fields = ["title", "content", "tags"]
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        tag_names = self.cleaned_data["tags"].split(",") if self.cleaned_data["tags"] else []
+        if commit:
+            instance.save()
+            instance.tags.clear()
+            for name in tag_names:
+                tag, created = Tag.objects.get_or_create(name=name.strip())
+                instance.tags.add(tag)
+        return instance
