@@ -12,7 +12,11 @@ class PostForm(forms.ModelForm):
         'title': forms.TextInput(attrs={'placeholder': 'Post title', 'class': 'form-control'}),
         'content': forms.Textarea(attrs={'placeholder': 'Write your post here...', 'class': 'form-control', 'rows': 8}),
         }
-
+        tags_field = forms.CharField(
+        required=False,
+        label='Tags',
+        help_text='Comma-separated. Example: django, tips, deployment'
+    )
 
     def clean_title(self):
         title = self.cleaned_data.get('title', '')
