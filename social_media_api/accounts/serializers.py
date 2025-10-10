@@ -5,16 +5,17 @@ from rest_framework.authtoken.models import Token
 User = get_user_model()
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)  # Ensure password isn’t exposed in responses
-    token = serializers.CharField(read_only=True)      # Include token in registration response
+    # Explicitly include CharField
+    password = serializers.CharField(write_only=True)
+    token = serializers.CharField(read_only=True)
 
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'password', 'bio', 'profile_picture', 'token']
 
     def create(self, validated_data):
-        # Use Django's built-in create_user method to handle password hashing
-        user = User.objects.create_user(
+        
+        user = get_user_model().objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email'),
             password=validated_data['password'],
@@ -22,7 +23,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             profile_picture=validated_data.get('profile_picture', None)
         )
 
-        # Automatically create a token for the user upon registration
         token = Token.objects.create(user=user)
-        user.token = token.key  # Temporarily attach token to response
+        user.token = token.key
         return user
