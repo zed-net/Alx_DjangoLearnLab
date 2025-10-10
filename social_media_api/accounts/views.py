@@ -29,7 +29,7 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
         return self.request.user
 
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
+class UserViewSet(generics.ListAPIView):
     """
     Provides list/retrieve endpoints and custom actions for follow/unfollow.
     """
