@@ -86,8 +86,11 @@ class LoginSerializer(serializers.Serializer):
             msg = _('Must include "username" and "password".')
             raise serializers.ValidationError(msg, code='authorization')
 
-        # Get or create the authentication token
-        token, created = Token.objects.get_or_create(user=user)
+        # Delete any existing token to ensure a new one is issued on every login
+        Token.objects.filter(user=user).delete()
+        
+        # Create the new authentication token
+        token = Token.objects.create(user=user)
         attrs['token'] = token.key # Add the token key to the validated data
 
         attrs['user'] = user
