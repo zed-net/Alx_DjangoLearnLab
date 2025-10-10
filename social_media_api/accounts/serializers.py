@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.utils.translation import gettext_lazy as _
+from rest_framework.authtoken.models import Token # Added Token import
 
 # Alias the custom user model for cleaner code
 User = get_user_model()
@@ -69,7 +70,7 @@ class LoginSerializer(serializers.Serializer):
     
     def validate(self, attrs):
         """
-        Authenticates the user using username and password.
+        Authenticates the user using username and password, and generates an auth token.
         """
         username = attrs.get('username')
         password = attrs.get('password')
@@ -84,6 +85,10 @@ class LoginSerializer(serializers.Serializer):
         else:
             msg = _('Must include "username" and "password".')
             raise serializers.ValidationError(msg, code='authorization')
+
+        # Get or create the authentication token
+        token, created = Token.objects.get_or_create(user=user)
+        attrs['token'] = token.key # Add the token key to the validated data
 
         attrs['user'] = user
         return attrs
