@@ -112,17 +112,15 @@ def user_feed(request):
 @permission_classes([permissions.IsAuthenticated])
 def like_post(request, pk):
     post = generics.get_object_or_404(Post, pk=pk)
-    user = request.user
-
-    like, created = Like.objects.get_or_create(user=user, post=post)
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
 
     if not created:
         return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
 
-    if post.author != user:
+    if post.author != request.user:
         Notification.objects.create(
             recipient=post.author,
-            actor=user,
+            actor=request.user,
             verb="liked your post",
             target=post
         )
@@ -133,13 +131,11 @@ def like_post(request, pk):
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def unlike_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    user = request.user
+    post = generics.get_object_or_404(Post, pk=pk)
+    like = Like.objects.filter(post=post, user=request.user).first()
 
-    like = Like.objects.filter(post=post, user=user).first()
     if not like:
         return Response({"detail": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
 
     like.delete()
     return Response({"detail": "Post unliked successfully."}, status=status.HTTP_200_OK)
-
