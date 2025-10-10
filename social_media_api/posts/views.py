@@ -10,7 +10,8 @@ from accounts.models import Profile
 from django.shortcuts import get_object_or_404
 from .models import Post, Like
 from notifications.models import Notification
-from rest_framework import status
+from rest_framework import status, generics
+
 
 
 
@@ -110,15 +111,14 @@ def user_feed(request):
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def like_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
+    post = generics.get_object_or_404(Post, pk=pk)
     user = request.user
 
-    if Like.objects.filter(post=post, user=user).exists():
+    like, created = Like.objects.get_or_create(user=user, post=post)
+
+    if not created:
         return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
 
-    Like.objects.create(post=post, user=user)
-
-    # ✅ Create a notification for the post author
     if post.author != user:
         Notification.objects.create(
             recipient=post.author,
