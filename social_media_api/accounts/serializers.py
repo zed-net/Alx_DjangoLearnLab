@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.utils.translation import gettext_lazy as _
 from rest_framework.authtoken.models import Token 
+from .models import CustomUser
 
 # Alias the custom user model for cleaner code
 User = get_user_model()
@@ -95,3 +96,12 @@ class LoginSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+
+
+class UserSerializer(serializers.ModelSerializer):
+    followers_count = serializers.IntegerField(source='followed_by.count', read_only=True)
+    following_count = serializers.IntegerField(source='following.count', read_only=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'email', 'followers_count', 'following_count']
