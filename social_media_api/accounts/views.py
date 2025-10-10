@@ -4,13 +4,13 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from django.contrib.auth import get_user_model
-from .serializers import RegisterSerializer
+from .serializers import RegistrationSerializer
 
 User = get_user_model()
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = RegisterSerializer
+    serializer_class = RegistrationSerializer
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -20,7 +20,7 @@ class CustomAuthToken(ObtainAuthToken):
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
-    serializer_class = RegisterSerializer
+    serializer_class = RegistrationSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):

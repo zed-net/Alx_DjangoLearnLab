@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.utils.translation import gettext_lazy as _
-from rest_framework.authtoken.models import Token # Added Token import
+from rest_framework.authtoken.models import Token 
 
 # Alias the custom user model for cleaner code
 User = get_user_model()
