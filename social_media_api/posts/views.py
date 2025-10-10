@@ -7,7 +7,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from accounts.models import Profile
-
+from django.shortcuts import get_object_or_404
+from .models import Post, Like
+from notifications.models import Notification
+from rest_framework import status
 
 
 
@@ -102,3 +105,41 @@ def user_feed(request):
     
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def like_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    user = request.user
+
+    if Like.objects.filter(post=post, user=user).exists():
+        return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+
+    Like.objects.create(post=post, user=user)
+
+    # ✅ Create a notification for the post author
+    if post.author != user:
+        Notification.objects.create(
+            recipient=post.author,
+            actor=user,
+            verb="liked your post",
+            target=post
+        )
+
+    return Response({"detail": "Post liked successfully."}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def unlike_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    user = request.user
+
+    like = Like.objects.filter(post=post, user=user).first()
+    if not like:
+        return Response({"detail": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+
+    like.delete()
+    return Response({"detail": "Post unliked successfully."}, status=status.HTTP_200_OK)
+

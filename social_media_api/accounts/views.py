@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions, status, viewsets
-from rest_framework.response import Response, get_object_or_404 
+from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from django.contrib.auth import get_user_model
 from .serializers import RegistrationSerializer, UserSerializer
 from .models import CustomUser
 from rest_framework.decorators import action
+from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
@@ -29,7 +30,7 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
         return self.request.user
 
 
-class UserViewSet(generics.GenericAPIView):
+class UserViewSet(viewsets.ModelViewSet):
     
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
@@ -41,23 +42,37 @@ class UserViewSet(generics.GenericAPIView):
         return Response(serializer.data)
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
-    def follow(self, request, pk=None):
-        user_to_follow = get_object_or_404(CustomUser, pk=pk)
-        if user_to_follow == request.user:
-            return Response({"detail": "You cannot follow yourself."},
-                            status=status.HTTP_400_BAD_REQUEST)
+    def follow_user(self, request, pk=None):
+        """Allows an authenticated user to toggle following/unfollowing another user.
+        
+        This action is named 'follow_user' to resolve the reported AttributeError.
+        """
+        
+        # self.get_object() is the standard way to retrieve the detail object and handles 404
+        user_to_toggle = self.get_object() 
+        follower_user = request.user 
 
-        request.user.following.add(user_to_follow)
-        return Response({"detail": f"You are now following {user_to_follow.username}."},
-                        status=status.HTTP_200_OK)
+        if user_to_toggle == follower_user:
+            return Response(
+                {"detail": "You cannot follow or unfollow yourself."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
-    def unfollow(self, request, pk=None):
-        user_to_unfollow = get_object_or_404(CustomUser, pk=pk)
-        if user_to_unfollow == request.user:
-            return Response({"detail": "You cannot unfollow yourself."},
-                            status=status.HTTP_400_BAD_REQUEST)
+        # Assumes the 'following' M2M field exists on the User model
+        is_following = follower_user.following.filter(pk=user_to_toggle.pk).exists()
 
-        request.user.following.remove(user_to_unfollow)
-        return Response({"detail": f"You have unfollowed {user_to_unfollow.username}."},
-                        status=status.HTTP_200_OK)
+        if is_following:
+            # Unfollow logic
+            follower_user.following.remove(user_to_toggle)
+            return Response(
+                {"detail": f"You have unfollowed {user_to_toggle.username}."}, 
+                status=status.HTTP_200_OK # 200 OK for successful removal/change
+            )
+        else:
+            # Follow logic
+            follower_user.following.add(user_to_toggle)
+            return Response(
+                {"detail": f"You are now following {user_to_toggle.username}."}, 
+                status=status.HTTP_201_CREATED # 201 Created for a new relationship
+            )
+
